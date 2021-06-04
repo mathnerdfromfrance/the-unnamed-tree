@@ -349,9 +349,12 @@ function gameLoop(diff) {
 	}
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
-	player.qol.uPoints = new Decimal(player.u.upgrades.length).add(player.s.upgrades.length).add(player.a.upgrades.length).add(player.p.upgrades.length).add(player.h.upgrades.length).add(player.b.upgrades.length).max(player.qol.uPoints)
-	player.qol.cPoints = new Decimal(player.points.add(1).slog()).add(player.u.points.add(1).slog()).add(player.s.points.add(1).slog()).add(player.a.points.add(1).slog()).add(player.p.points.add(1).slog()).add(player.h.points.add(1).slog()).add(player.b.points.add(1).slog()).times(10).max(player.qol.cPoints)
-	player.qol.points = player.qol.uPoints.add(player.qol.cPoints).minus(player.qol.spentPoints)
+	player.qol.uPoints = new Decimal(player.u.upgrades.length).add(player.s.upgrades.length).add(player.a.upgrades.length).add(player.p.upgrades.length).add(player.h.upgrades.length).add(player.b.upgrades.length).add(player.r.upgrades.length).max(player.qol.uPoints)
+	player.qol.buPoints = new Decimal(0)
+	if(hasUpgrade("r", 11)) player.qol.buPoints = player.qol.buPoints.add(20)
+	if(hasUpgrade("r", 12)) player.qol.buPoints = player.qol.buPoints.add(20)
+	player.qol.cPoints = new Decimal(player.points.add(1).slog()).add(player.u.points.add(1).slog()).add(player.s.points.add(1).slog()).add(player.a.points.add(1).slog()).add(player.p.points.add(1).slog()).add(player.h.points.add(1).slog()).add(player.b.points.add(1).slog()).add(player.r.points.add(1).slog()).times(10).max(player.qol.cPoints)
+	player.qol.points = player.qol.uPoints.add(player.qol.buPoints).add(player.qol.cPoints).minus(player.qol.spentPoints)
 
 	if(hasUpgrade("qol", 61)) {
 		if(player.u.buyables[11].gte(100)) buyBuyable("u", 11)
