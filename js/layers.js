@@ -918,7 +918,7 @@ addLayer("p", {
         24: {
             title: "Free Power",
             description: "596F 7520 6C69 6B65 2074 6F20 7761 7374 6520 796F 7572 2074 696D 6520 646F 6E27 7420 796F 7520 3F<br>Power boosts Power gain again",
-            cost() { return new Decimal(143) },
+            cost() { return new Decimal(142) },
             unlocked() { return hasUpgrade("r", 13) || hasUpgrade("p", 24) },
             effect() { 
 				eff = new Decimal(player.p.points.add(1).log10().add(1).pow(0.125))
