@@ -428,7 +428,7 @@ var interval = setInterval(function() {
 	if (player.offTime !== undefined) {
 		if (player.offTime.remain > modInfo.offlineLimit * 3600) player.offTime.remain = modInfo.offlineLimit * 3600
 		if (player.offTime.remain > 0) {
-			let offlineDiff = Math.max(player.offTime.remain / 100, diff)
+			let offlineDiff = Math.max(player.offTime.remain / 10, diff)
 			player.offTime.remain -= offlineDiff
 			diff += offlineDiff
 		}
