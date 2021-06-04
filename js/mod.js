@@ -17,15 +17,15 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-    <br><h3>v0.9 4th Row ( June 4th )</h3><br>
-    <br><h3>v0.8 The Color Update ( June 3rd )</h3><br>
-    <br><h3>v0.7 Tetrate ( May 30th )</h3><br>
-    <br><h3>v0.6 The QoL Update ( May 28th )</h3><br>
-    <br><h3>v0.5 Overpowered ( May 26th )</h3><br>
-    <br><h3>v0.4 Average ( May 23rd )</h3><br>
-    <br><h3>v0.3 America ( May 22nd )</h3><br>
-    <br><h3>v0.2 No Ideas Yet ( May 22nd )</h3><br>
-	<br><h3>v0.1 I Had No Idea For A Name So... ( May 20th )</h3><br>`
+    <br><h3>v0.9 : 4th Row ( June 4th )</h3><br>
+    <br><h3>v0.8 : The Color Update ( June 3rd )</h3><br>
+    <br><h3>v0.7 : ( May 30th )</h3><br>
+    <br><h3>v0.6 : The QoL Update ( May 28th )</h3><br>
+    <br><h3>v0.5 : Overpowered ( May 26th )</h3><br>
+    <br><h3>v0.4 : Average ( May 23rd )</h3><br>
+    <br><h3>v0.3 : America ( May 22nd )</h3><br>
+    <br><h3>v0.2 : No Ideas Yet ( May 22nd )</h3><br>
+	<br><h3>v0.1 : I Had No Idea For A Name So... ( May 20th )</h3><br>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
