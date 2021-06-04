@@ -929,7 +929,7 @@ addLayer("p", {
         25: {
             title: "Even More Power",
             description: "Power divides Reset cost",
-            cost() { return new Decimal(170) },
+            cost() { return new Decimal(169) },
             unlocked() { return hasUpgrade("r", 13) || hasUpgrade("p", 25) },
             effect() { 
 				eff = new Decimal(player.p.points.add(1).pow(9))
