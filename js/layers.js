@@ -32,6 +32,7 @@ addLayer("u", {
         if(hasUpgrade("u", 21)) mult = mult.times(tmp.u.upgrades[21].effect)
         if(hasUpgrade("u", 23)) mult = mult.times(tmp.u.upgrades[23].effect)
         if(hasUpgrade("u", 51)) mult = mult.times(tmp.u.upgrades[51].effect)
+        if(hasUpgrade("u", 52)) mult = mult.times(tmp.u.upgrades[52].effect)
         if(hasUpgrade("p", 22)) mult = mult.times(tmp.p.upgrades[22].effect)
         mult = mult.times(tmp.u.buyables[13].effect)
         mult = mult.times(tmp.r.effect)
@@ -45,7 +46,10 @@ addLayer("u", {
 		eff = new Decimal(0)
         if(hasUpgrade("u", 13)) eff = eff.add(player.u.points.add(1).log10().add(1).log10().div(25))
         if(hasUpgrade("s", 15)) eff = eff.times(player.u.points.slog().add(2).pow(0.1))
+        if(hasUpgrade("a", 35)) eff = eff.times(player.a.points.slog().add(2).pow(0.25))
         if(eff.gte(0.4)) eff = eff.add(0.6).log10().add(0.4)
+        if(eff.gte(0.5)) eff = eff.add(0.5).log10().add(0.5)
+        if(eff.gte(0.6)) eff = eff.add(0.4).log10().add(0.6)
 		return eff
 	},
 	effectDescription() { return ( hasUpgrade("u", 13) ? ( hasUpgrade("s", 14) ? "Which Are Adding " + format(tmp.u.effect) + " To The Unnamed Point Gain Exponent And Multiplying Point Gain By " + format(tmp.u.effect.add(1).pow(tmp.u.buyables[11].effect.times(100))) + "x":"Which Are Adding " + format(tmp.u.effect) + " To The Unnamed Point Gain Exponent"):"") },
@@ -260,6 +264,17 @@ addLayer("u", {
             },
             effectDisplay() { return "*" + format(tmp.u.upgrades[51].effect) + " to Unnnamed Point gain" },
         },
+        52: {
+            title: "Self-Boost 2000",
+            description: "Unnamed Points boost their own gain again",
+            cost() { return new Decimal("1e462200000") },
+            unlocked() { return hasUpgrade("a", 35) || hasUpgrade("u", 52) },
+            effect() { 
+				eff = new Decimal(10).pow(player.u.points.add(1).log10().pow(0.85))
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.u.upgrades[52].effect) + " to Unnnamed Point gain" },
+        },
     },
     buyables: {
         11: {
@@ -365,6 +380,7 @@ addLayer("s", {
     exponent() { // Prestige currency exponent
 		exp = new Decimal(1.25)
         if(hasUpgrade("s", 31)) exp = exp.minus(tmp.s.upgrades[31].effect)
+        exp = exp.minus(tmp.b.buyables[11].effect)
 		return exp
 	},
     base() {
@@ -387,6 +403,7 @@ addLayer("s", {
     directMult() { // Multiplier to layer's currency gain
         mult = new Decimal(1)
         if(hasUpgrade("s", 41)) mult = mult.times(tmp.s.upgrades[41].effect)
+        if(hasUpgrade("s", 43)) mult = mult.times(tmp.s.upgrades[43].effect)
         if(hasUpgrade("b", 13)) mult = mult.times(tmp.b.upgrades[13].effect)
         if(hasUpgrade("r", 12)) mult = mult.times(tmp.r.upgrades[12].effect)
         return mult
@@ -498,7 +515,7 @@ addLayer("s", {
             cost() { return new Decimal(1220) },
             unlocked() { return hasUpgrade("u", 35) || hasUpgrade("s", 31) || player.p.unlocked },
             effect() { 
-				eff = new Decimal(player.points.add(1).slog().div(100))
+				eff = new Decimal(player.points.add(1).slog().div(100)).min(0.1)
                 return eff
             },
             effectDisplay() { return "-"+format(tmp.s.upgrades[31].effect) + " to the Super Point cost exponent" },
@@ -558,6 +575,17 @@ addLayer("s", {
             description: "Power cost is cube-rooted",
             cost() { return new Decimal("1e11") },
             unlocked() { return hasUpgrade("r", 11) || hasUpgrade("s", 42) },
+        },
+        43: {
+            title: "( Insert Upgrade Name Here )",
+            description: "Super Point gain is 400% higher for every OoM of Resets",
+            cost() { return new Decimal("8.5e11") },
+            unlocked() { return hasUpgrade("r", 14) || hasUpgrade("s", 43) },
+            effect() { 
+				eff = new Decimal(5).pow(player.r.points.add(1).log10())
+                return eff
+            },
+            effectDisplay() { return "*"+format(tmp.s.upgrades[41].effect) + " to Super Point gain" },
         },
     },
 })
@@ -754,6 +782,12 @@ addLayer("a", {
             },
             effectDisplay() { return "*" + format(tmp.a.upgrades[34].effect) + " to Bonus Point gain" },
         },
+        35: {
+            title: "You Want More Upgrades ?",
+            description: "The Unnamed Point effect gains a term based on Average Points",
+            cost() { return new Decimal("1e25000000") },
+            unlocked() { return hasUpgrade("r", 21) || hasUpgrade("a", 35) },
+        },
     },
 })
 addLayer("p", {
@@ -810,7 +844,8 @@ addLayer("p", {
     },
 	effect() {
 		eff = new Decimal(1)
-        eff = eff.times(new Decimal("1e200").pow(player.p.points.pow(0.99)))
+        if(hasUpgrade("h", 32)) eff = eff.times(new Decimal("1e2021").pow(player.p.points.pow(2.01)))
+        else eff = eff.times(new Decimal("1e200").pow(player.p.points.pow(0.99)))
         return eff
 	},
 	effectDescription() { return "Which Are Dividing Super Point Cost By " + format(tmp.p.effect) + "x And Multiplying Point Gain By " + format(new Decimal(10).pow(tmp.p.effect.add(3).ssqrt().minus(2))) + "x"},
@@ -937,6 +972,12 @@ addLayer("p", {
             },
             effectDisplay() { return "/"+format(tmp.p.upgrades[25].effect) + " to Reset cost" },
         },
+        31: {
+            title: "VGhl IEVs ZWN0 cmlj IFRy ZWUg djEu MSA6 IERl dmVs b3Bw ZW1l bnQg SGFz IEJl Z3Vu",
+            description: "Unlock a Bonus Point buyable",
+            cost() { return new Decimal(240) },
+            unlocked() { return hasUpgrade("r", 21) || hasUpgrade("p", 31) },
+        },
     },
 })
 addLayer("h", {
@@ -966,6 +1007,7 @@ addLayer("h", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() { // Prestige currency exponent
 		exp = new Decimal(4)
+        if(hasUpgrade("r", 15)) exp = exp.add(tmp.r.upgrades[15].effect)
 		return exp
 	},
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -1084,6 +1126,12 @@ addLayer("h", {
             },
             effectDisplay() { return "*"+format(tmp.h.upgrades[31].effect) + " to Hyper Point gain" },
         },
+        32: {
+            title: "Hypertension",
+            description: "Power effect is better",
+            cost() { return new Decimal("1e1620") },
+            unlocked() { return hasUpgrade("r", 21) || hasUpgrade("h", 32) },
+        },
     },
     buyables: {
         11: {
@@ -1189,6 +1237,7 @@ addLayer("b", {
     doReset(resettingLayer){
         let keep = []
         if(hasUpgrade("qol", 46)) keep.push("upgrades")
+        if(hasUpgrade("qol", 53)) keep.push("buyables")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -1268,6 +1317,29 @@ addLayer("b", {
             unlocked() { return hasUpgrade("r", 11) || hasUpgrade("b", 23) },
         },
     },
+    buyables: {
+        11: {
+            title: "Yet Another Bonus",
+            display() {
+                return "Reduce the Super point cost exponent by " + format(tmp.b.buyables[11].effect) + "<br>Cost : " + format(this.cost(getBuyableAmount("b", 11))) + " Bonus Points"
+            },
+            unlocked() { return hasUpgrade("p", 31) || getBuyableAmount("b", 11).gte(1) },
+            cost(x) { 
+                return new Decimal("1e200").pow(x.pow((hasUpgrade("r", 22) ? 1.5:7.5)).times(0.01).add(1))
+            },
+            canAfford() { 
+                return player.b.points.gte(this.cost(getBuyableAmount("b", 11))) 
+            },
+            buy() { 
+                player.b.points = player.b.points.minus(this.cost(getBuyableAmount("b", 11)))
+                setBuyableAmount("b", 11, getBuyableAmount("b", 11).add(1))
+            },
+            effect() {
+                eff = new Decimal(0.001).times(getBuyableAmount("b", 11).pow(1.5)).min(0.1)
+                return eff
+            },
+        },
+    },
 })
 addLayer("r", {
     name: "Resets", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -1309,6 +1381,7 @@ addLayer("r", {
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         exp = new Decimal(1)
+        if(hasUpgrade("r", 14)) exp = exp.times(tmp.r.upgrades[14].effect)
         return exp
     },
 	effect() {
@@ -1354,6 +1427,41 @@ addLayer("r", {
                 return eff
             },
             effectDisplay() { return "*"+format(tmp.r.upgrades[13].effect) + " to Power gain" },
+        },
+        14: {
+            title: "I Crave This Upgrade",
+            description: "Resets root their own cost",
+            cost() { return new Decimal(15) },
+            unlocked() { return hasUpgrade("r", 13) || hasUpgrade("r", 14) },
+            effect() { 
+				eff = new Decimal(player.r.points.slog().pow(5)).max(1).min(2.6)
+                return eff
+            },
+            effectDisplay() { return "Reset cost is brought to the "+format(tmp.r.upgrades[14].effect) + "th root" },
+        },
+        15: {
+            title: "Booooost",
+            description: "Points boost the Hyper Point gain exponent",
+            cost() { return new Decimal(40) },
+            unlocked() { return hasUpgrade("s", 43) || hasUpgrade("r", 15) },
+            effect() { 
+				eff = new Decimal(player.points.slog())
+                if(hasUpgrade("r", 21)) eff = eff.times(10)
+                return eff
+            },
+            effectDisplay() { return "+"+format(tmp.r.upgrades[15].effect) + " to the Hyper Point gain exponent" },
+        },
+        21: {
+            title: "Booooooooost",
+            description: "Previous upgrade is 900% stronger",
+            cost() { return new Decimal(41) },
+            unlocked() { return hasUpgrade("r", 15) || hasUpgrade("r", 21) },
+        },
+        22: {
+            title: "Better Buyable",
+            description: "The Bonus Point buyable's scaling is 80% slower",
+            cost() { return new Decimal(45) },
+            unlocked() { return hasUpgrade("p", 31) || hasUpgrade("r", 22) },
         },
     },
 })
@@ -1482,6 +1590,12 @@ addLayer("qol", {
             description: "Keep Hyper Point buyables",
             cost() { return new Decimal(0) },
             unlocked() { return player.r.unlocked && hasUpgrade("qol", 16) },
+        },
+        53: {
+            title: "",
+            description: "Keep Bonus Point buyables",
+            cost() { return new Decimal(15) },
+            unlocked() { return player.r.unlocked && hasUpgrade("p", 31) },
         },
         61: {
             title: "",
