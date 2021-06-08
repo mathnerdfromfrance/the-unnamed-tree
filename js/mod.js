@@ -12,12 +12,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.10",
-	name: "Past 300 Upgrades",
+	num: "0.11",
+	name: "Enlightment",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-    <br><h3>v0.10 : Past 300 Upgrades ( June 5th )</h3><br>
+    <br><h3>v0.11 : Enlightment ( June 8th )</h3><br>
+    <br><h3>v0.10 : Past 90 Upgrades ( June 5th )</h3><br>
     <br><h3>v0.9 : 4th Row ( June 4th )</h3><br>
     <br><h3>v0.8 : The Color Update ( June 3rd )</h3><br>
     <br><h3>v0.7 : Tetrate ( May 30th )</h3><br>
@@ -58,6 +59,7 @@ function getPointGen() {
 	if(hasUpgrade("a", 11)) gain = gain.times(tmp.a.upgrades[11].effect)
 	if(hasUpgrade("p", 14)) gain = gain.times(tmp.p.upgrades[14].effect)
 	if(hasUpgrade("p", 15)) gain = gain.times(tmp.p.upgrades[15].effect)
+	if(hasUpgrade("h", 33)) gain = gain.times(tmp.h.upgrades[33].effect)
 	if(hasUpgrade("b", 12)) gain = gain.times(tmp.b.upgrades[12].effect)
 	// Upgrade Exponents
 	if(hasUpgrade("s", 35)) gain = gain.pow(tmp.s.upgrades[35].effect)
@@ -80,7 +82,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.r.points.gte(51)
+	return player.l.points.gte(7)
 }
 
 
