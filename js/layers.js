@@ -350,6 +350,27 @@ addLayer("u", {
                 return eff
             }
         },
+        21: {
+            title: "Can't Find A Name Buyable",
+            display() {
+                return "Bring Light Point's base to the " + format(tmp.u.buyables[21].effect) + "th root<br>Cost : " + format(this.cost(getBuyableAmount("u", 21))) + " Unnamed Points"
+            },
+            unlocked() { return hasUpgrade("r", 23) || getBuyableAmount("u", 21).gte(1) },
+            cost(x) {
+                return new Decimal("1e600000000").tetrate(x.add(1).pow(0.001))
+            },
+            canAfford() { 
+                return player.u.points.gte(this.cost(getBuyableAmount("u", 21))) 
+            },
+            buy() { 
+                player.u.points = player.u.points.minus(this.cost(getBuyableAmount("u", 21)))
+                setBuyableAmount("u", 21, getBuyableAmount("u", 21).add(1))
+            },
+            effect() { 
+                eff = new Decimal(getBuyableAmount("u", 21).add(1).log10().add(1).pow(7.5))
+                return eff
+            }
+        },
     },
 })
 addLayer("s", {
@@ -840,6 +861,7 @@ addLayer("p", {
         if(hasUpgrade("p", 23)) mult = mult.times(tmp.p.upgrades[23].effect)
         if(hasUpgrade("p", 24)) mult = mult.times(tmp.p.upgrades[24].effect)
         if(hasUpgrade("r", 13)) mult = mult.times(tmp.r.upgrades[13].effect)
+        if(hasUpgrade("l", 11)) mult = mult.times(tmp.l.upgrades[11].effect)
         return mult
     },
 	effect() {
@@ -1014,9 +1036,10 @@ addLayer("h", {
         mult = new Decimal(1)
         if(hasUpgrade("u", 45)) mult = mult.times(tmp.u.upgrades[45].effect)
         if(hasUpgrade("h", 14)) mult = mult.times(tmp.h.upgrades[14].effect)
-        if(hasUpgrade("b", 14)) mult = mult.times(tmp.b.upgrades[14].effect)
         if(hasUpgrade("h", 15)) mult = mult.times(tmp.h.upgrades[15].effect)
         if(hasUpgrade("h", 31)) mult = mult.times(tmp.h.upgrades[31].effect)
+        if(hasUpgrade("b", 14)) mult = mult.times(tmp.b.upgrades[14].effect)
+        if(hasUpgrade("d", 11)) mult = mult.times(tmp.d.upgrades[11].effect)
         mult = mult.times(tmp.h.buyables[12].effect)
         mult = mult.times(tmp.b.effect)
         mult = mult.times(tmp.r.effect)
@@ -1132,6 +1155,17 @@ addLayer("h", {
             cost() { return new Decimal("1e1620") },
             unlocked() { return hasUpgrade("r", 21) || hasUpgrade("h", 32) },
         },
+        33: {
+            title: "Hyperbole",
+            description: "Point gain is boosted based on best upgrades",
+            cost() { return new Decimal("1e2200") },
+            unlocked() { return hasUpgrade("r", 24) || hasUpgrade("h", 33) },
+            effect() { 
+				eff = new Decimal(player.qol.uPoints.tetrate(2.4))
+                return eff
+            },
+            effectDisplay() { return "*"+format(tmp.h.upgrades[33].effect) + " to Point gain" },
+        },
     },
     buyables: {
         11: {
@@ -1220,6 +1254,7 @@ addLayer("b", {
         if(hasUpgrade("b", 15)) mult = mult.times(tmp.b.upgrades[15].effect)
         if(hasUpgrade("b", 21)) mult = mult.times(tmp.b.upgrades[21].effect)
         if(hasUpgrade("r", 11)) mult = mult.times(tmp.r.upgrades[11].effect)
+        if(hasUpgrade("l", 12)) mult = mult.times(tmp.l.upgrades[12].effect)
         mult = mult.times(tmp.r.effect)
         return mult
     },
@@ -1345,7 +1380,7 @@ addLayer("r", {
     name: "Resets", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 3, // Row the layer is in on the tree (0 is the first row)
-    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     branches: ["h", "b", "p"],
     color: "#fc9e0a",
     hotkeys: [
@@ -1386,7 +1421,9 @@ addLayer("r", {
     },
 	effect() {
 		eff = new Decimal(1)
-        eff = eff.times(new Decimal(1000).pow(player.r.points))
+        base = new Decimal(1000)
+        base = base.times(tmp.d.effect)
+        eff = eff.times(base.pow(player.r.points))
 		return eff
 	},
 	effectDescription() { return "Which Are Boosting All Previous Non-Static Layers' Gain By " + format(tmp.r.effect) + "x" },
@@ -1462,6 +1499,178 @@ addLayer("r", {
             description: "The Bonus Point buyable's scaling is 80% slower",
             cost() { return new Decimal(45) },
             unlocked() { return hasUpgrade("p", 31) || hasUpgrade("r", 22) },
+        },
+        23: {
+            title: "Even Better Buyable",
+            description: "Unlock a 4th Unnamed Point buyable",
+            cost() { return new Decimal(52) },
+            unlocked() { return player.l.unlocked || player.d.unlocked || hasUpgrade("r", 23) },
+        },
+        24: {
+            title: "Do You Want More Effects ?",
+            description: "Unlock an effect for Dark Points",
+            cost() { return new Decimal(53) },
+            unlocked() { return hasUpgrade("l", 12) || hasUpgrade("r", 23) },
+        },
+    },
+})
+addLayer("l", {
+    name: "Light Points", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "L", // This appears on the layer's node. Default is the id with the first letter capitalized
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    branches: ["h", "b", "p"],
+    color: "#e1e4cb",
+    hotkeys: [
+        {key: "l", description: "Press L to do a Light Reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasUpgrade("u", 52) || player.l.unlocked},
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+        best: new Decimal(0),
+        total: new Decimal(0),
+        first: 0,
+        auto: false,
+        pseudoUpgs: [],
+    }},
+    requires() { return new Decimal("1e1800") }, // Can be a function that takes requirement increases into account
+    resource: "Light Points", // Name of prestige currency
+    baseResource: "Hyper Points", // Name of resource prestige is based on
+    baseAmount() {return player.h.points}, // Get the current amount of baseResource
+    type() {return "static"}, // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent() { // Prestige currency exponent
+		exp = new Decimal(2.5)
+		return exp
+	},
+    base() {
+        base = new Decimal("1e250")
+        return base
+    },
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal(1)
+        exp = exp.times(tmp.u.buyables[21].effect)
+        return exp
+    },
+	effect() {
+		eff = new Decimal(1)
+		return eff
+	},
+	effectDescription() { return "" },
+    passiveGeneration() { return hasUpgrade("qol", 18) },
+    doReset(resettingLayer){
+        let keep = []
+        if(hasUpgrade("qol", 48)) keep.push("upgrades")
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
+    },
+    upgrades: {
+        11: {
+            title: "The Power Of Light",
+            description: "Light Points boost Power gain",
+            cost() { return new Decimal(1) },
+            unlocked() { return player.l.unlocked || hasUpgrade("l", 11) },
+            effect() { 
+				eff = new Decimal(player.l.points.add(1).pow(0.01).log10().add(1).pow(20).log10().add(1))
+                return eff
+            },
+            effectDisplay() { return "*"+format(tmp.l.upgrades[11].effect) + " to Power gain" },
+        },
+        12: {
+            title: "Bonus Light",
+            description: "Light Points boost Bonus Point gain",
+            cost() { return new Decimal(3) },
+            unlocked() { return hasUpgrade("d", 11) || hasUpgrade("l", 12) },
+            effect() { 
+				eff = new Decimal(10).pow(player.l.points.add(1).log10().add(1).pow(1.1)).times(1000)
+                return eff
+            },
+            effectDisplay() { return "*"+format(tmp.l.upgrades[12].effect) + " to Bonus Point gain" },
+        },
+    },
+})
+addLayer("d", {
+    name: "Dark Points", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "D", // This appears on the layer's node. Default is the id with the first letter capitalized
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    branches: ["h", "b", "p"],
+    color: "#32434a",
+    hotkeys: [
+        {key: "d", description: "Press D to do a Dark Reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasUpgrade("u", 52) || player.d.unlocked},
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+        best: new Decimal(0),
+        total: new Decimal(0),
+        first: 0,
+        auto: false,
+        pseudoUpgs: [],
+    }},
+    requires() { return new Decimal(250) }, // Can be a function that takes requirement increases into account
+    resource: "Dark Points", // Name of prestige currency
+    baseResource: "Power", // Name of resource prestige is based on
+    baseAmount() {return player.p.points}, // Get the current amount of baseResource
+    type() {return "static"}, // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent() { // Prestige currency exponent
+		exp = new Decimal(1.1)
+		return exp
+	},
+    base() {
+        base = new Decimal(1.05)
+        if(hasUpgrade("d", 12)) base = base.minus(tmp.d.upgrades[12].effect)
+        return base
+    },
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal(1)
+        return exp
+    },
+	effect() {
+		eff = new Decimal(1)
+        if(hasUpgrade("r", 24)) eff = eff.times(player.d.points.add(1).log10().add(1).log10().add(1))
+		return eff
+	},
+	effectDescription() { return (hasUpgrade("r", 24) ? "Which Are Boosting The Reset Effect Base By " + format(tmp.d.effect) + "x":"") },
+    passiveGeneration() { return hasUpgrade("qol", 19) },
+    doReset(resettingLayer){
+        let keep = []
+        if(hasUpgrade("qol", 49)) keep.push("upgrades")
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
+    },
+    upgrades: {
+        11: {
+            title: "Dark Boost",
+            description: "Dark Points boost Hyper Point gain",
+            cost() { return new Decimal(3) },
+            unlocked() { return player.d.unlocked || hasUpgrade("d", 11) },
+            effect() { 
+				eff = new Decimal(10).pow(player.d.points.add(1).log10().add(1).pow(12.5))
+                if(eff.gte("1e100")) eff = eff.pow(0.01).times("1e99")
+                if(eff.gte("1e1000")) eff = eff.pow(0.01).times("1e990")
+                if(eff.gte("1e10000")) eff = eff.log10().pow(2500)
+                return eff
+            },
+            effectDisplay() { return "*"+format(tmp.d.upgrades[11].effect) + " to Hyper Point gain" },
+        },
+        12: {
+            title: "Dark Self-Synergy",
+            description: "Dark Points reduce their own base",
+            cost() { return new Decimal(5) },
+            unlocked() { return hasUpgrade("d", 11) || hasUpgrade("d", 12) },
+            effect() { 
+				eff = new Decimal(player.d.points.add(1).slog().add(1).div(250))
+                return eff
+            },
+            effectDisplay() { return "-"+format(tmp.d.upgrades[12].effect) + " to Dark Point base" },
         },
     },
 })
