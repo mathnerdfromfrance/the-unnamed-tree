@@ -1377,7 +1377,7 @@ addLayer("b", {
     },
 })
 addLayer("r", {
-    name: "Reset Points", // This is optional, only used in a few places, If absent it just uses the layer id.
+    name: "Resets", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 3, // Row the layer is in on the tree (0 is the first row)
     position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
@@ -1397,7 +1397,7 @@ addLayer("r", {
         pseudoUpgs: [],
     }},
     requires() { return new Decimal("1e30") }, // Can be a function that takes requirement increases into account
-    resource: "Reset Points", // Name of prestige currency
+    resource: "Resets", // Name of prestige currency
     baseResource: "Bonus Points", // Name of resource prestige is based on
     baseAmount() {return player.b.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
